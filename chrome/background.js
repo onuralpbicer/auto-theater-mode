@@ -1,3 +1,4 @@
 chrome.runtime.onInstalled.addListener(() => {
-    console.log('installed')
-});
+	chrome.storage.sync.set({ preference: 'theater' })
+	// chrome.storage.sync.set({ preference: 'fullscreen' })
+})

@@ -1,9 +1,11 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-	console.log(event)
-})
+chrome.storage.sync.get('preference', ({ preference = 'theater' }) => {
+	const radios = document.querySelectorAll('input[name="input"]')
+	radios.forEach((radio) => {
+		radio.removeAttribute('disabled')
+		if (radio.value === preference) radio.checked = 'true' //('selected', 'true')
 
-function setPageBackgroundColor() {
-	chrome.storage.sync.get('color', ({ color }) => {
-		document.body.style.backgroundColor = color
+		radio.addEventListener('click', function () {
+			chrome.storage.sync.set({ preference: radio.value })
+		})
 	})
-}
+})
