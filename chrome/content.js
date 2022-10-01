@@ -1,50 +1,41 @@
-chrome.storage.sync.get('preference', ({ preference = 'theater' }) => {
-	console.log(preference)
+const theaterButtonSelector = () =>
+	document.querySelector('[title="Cinema mode (t)"]')
 
-	setTimeout(() => {
-		if (preference === 'theater') {
-			if (!isTheater()) {
-				clickOnTheater()
-			}
-		} else if (preference === 'fullscreen') {
-			if (!isFullscreen()) {
-				clickOnFullscreen()
-			}
+function main() {
+	/**
+	 * @type HTMLVideoElement
+	 */
+	const video = document.getElementsByTagName('video').item(0)
+
+	// click on the theater mode button after a couple ticks of progress to give the page a change to load
+	let i = 0
+	const handler = () => {
+		i++
+		if (i > 1) {
+			clickOnTheater()
+			video.removeEventListener('progress', handler)
 		}
-	}, 1000)
-})
-
-function getPlayer() {
-	const video = document.getElementById('movie_player')
-	if (!video) throw new Error('Video player not found')
-	return video
-}
-
-function isFullscreen() {
-	const video = getPlayer()
-	return (
-		window.innerWidth === video.clientWidth &&
-		window.innerHeight === video.clientHeight
-	)
-}
-
-function isTheater() {
-	const video = getPlayer()
-	return window.innerWidth === video.clientWidth
-}
-
-function clickOnFullscreen() {
-	const button = document.querySelector('[title="Full screen (f)"]')
-	if (button) {
-		console.log('fullscreen')
-		button.click()
 	}
+
+	// only do it if you detect the theater button (the button doesn't show up if it's already in theater mode or fullscreen)
+	if (theaterButtonSelector()) {
+		video.addEventListener('progress', handler)
+
+		return () => {
+			video.removeEventListener('progress', handler)
+		}
+	} else return null
 }
 
 function clickOnTheater() {
-	const button = document.querySelector('[title="Cinema mode (t)"]')
+	const button = theaterButtonSelector()
 	if (button) {
-		console.log('theater')
 		button.click()
 	}
+}
+
+let destroyer = null
+navigation.onnavigate = () => {
+	if (destroyer) destroyer()
+	destroyer = main()
 }
