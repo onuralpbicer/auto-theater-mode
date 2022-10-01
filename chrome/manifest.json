@@ -4,12 +4,7 @@
     "version": "0.0.1",
     "manifest_version": 3,
     "permissions": [
-        "storage",
-        "scripting",
-        "tabs",
-        "http://*/",
-        "https://*/",
-        "activeTab"
+        "https://*.youtube.com/*"
     ],
     "content_scripts": [
         {
